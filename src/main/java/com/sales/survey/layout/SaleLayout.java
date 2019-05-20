@@ -1,15 +1,17 @@
 package com.sales.survey.layout;
 
+import java.util.List;
+
 public class SaleLayout extends Layout {
 
 	private String id;
-	private ItemLayout item;
+	private List<ItemLayout> items;
 	private String seller;
 	
-	public SaleLayout(String id, ItemLayout item, String seller) {
+	public SaleLayout(String id, List<ItemLayout> items, String seller) {
 		super();
 		this.id = id;
-		this.item = item;
+		this.items = items;
 		this.seller = seller;
 	}
 	
@@ -19,11 +21,11 @@ public class SaleLayout extends Layout {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public ItemLayout getItem() {
-		return item;
+	public List<ItemLayout> getItems() {
+		return items;
 	}
-	public void setItem(ItemLayout item) {
-		this.item = item;
+	public void setItems(List<ItemLayout> items) {
+		this.items = items;
 	}
 	public String getSeller() {
 		return seller;
