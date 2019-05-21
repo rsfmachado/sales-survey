@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.sales.survey.manager.IOManager;
 import com.sales.survey.transport.SalesSurveyData;
@@ -17,13 +18,12 @@ public class SalesSurveyServiceImpl implements SalesSurveyService {
 	private IOManager ioManager;
 	
 	@Override
-	public String survey() {
-		logger.debug("[SALES_SURVEY]: survey().");
+	public SalesSurveyData survey(MultipartFile[] fileDatas, String absolutePath) {
+		logger.debug("[SALES_SURVEY]: survey(fileDatas, absolutePath).");
 		
-		// TODO IOManager read imput directory in search for dat files
-		SalesSurveyData extractedData = ioManager.extractInputData();
+		SalesSurveyData extractedData = ioManager.extractInputData(fileDatas, absolutePath);
 		
-		return "Survey development.";
+		return extractedData;
 	}
 
 }
