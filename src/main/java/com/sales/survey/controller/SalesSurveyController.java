@@ -1,13 +1,16 @@
 package com.sales.survey.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,12 +73,10 @@ public class SalesSurveyController {
 	private String doUpload(HttpServletRequest request, Model model, SalesSurveyViewForm salesSurveyViewForm) {
 		logger.debug("[SALES_SURVEY]: doUpload(request, model, salesSurveyViewForm).");
 		 
-		// Root Directory.
 		String uploadRootPath = request.getServletContext().getRealPath("upload");
 		logger.debug("[SALES_SURVEY]: doUpload(request, model, salesSurveyViewForm). uploadRootPath: " + uploadRootPath);
 		 
 		File uploadRootDir = new File(uploadRootPath);
-		// Create directory if it not exists.
 		if (!uploadRootDir.exists()) {
 			uploadRootDir.mkdirs();
 		}
@@ -87,17 +88,16 @@ public class SalesSurveyController {
 		return "uploadResult";
 	}
 	
-	@PostMapping(value = "/download", produces = "text/plain;charset=UTF-8")
-	public void download(HttpServletRequest request, HttpServletResponse response, Model model, SalesSurveyResult salesSurveyResult) {
+	@PostMapping(value = "/download")
+	public void download(HttpServletResponse response, Model model, @ModelAttribute("salesSurveyResult") SalesSurveyResult salesSurveyResult) {
 		logger.debug("[SALES_SURVEY]: download(response, model, salesSurveyResult):");
 		
-		/*
-		response.addHeader("Content-Disposition", "attachment; filename=\""+salesSurveyResult.getResultFileName()+"\"");
+		response.addHeader("Content-Disposition", "attachment; filename=\"sales_survey_result.done.dat\"");
 		response.setContentType("text/plain");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
 		try {
-			FileInputStream fileInputStream = new FileInputStream(createFile(salesSurveyResult, "sales_survey_result.done.dat"));
+			FileInputStream fileInputStream = new FileInputStream(createFile(salesSurveyResult));
 
 			IOUtils.copy(fileInputStream, response.getOutputStream());
 
@@ -106,29 +106,26 @@ public class SalesSurveyController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		*/
 		
 	}
 	
-	private File createFile(SalesSurveyResult salesSurveyResult,  String fileName) {
+	private File createFile(SalesSurveyResult salesSurveyResult) {
 		
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(fileName, "UTF-8");
+			writer = new PrintWriter("sales_survey_result.done.dat", "UTF-8");
 			writer.println("Total de Clientes: " + salesSurveyResult.getNumberOfClients());
 			writer.println("Total de Vendedores: " + salesSurveyResult.getNumberOfSellers());
 			writer.println("Id da Melhor Venda: " + salesSurveyResult.getBestSaleID());
-			writer.println("Pior vendedor" + salesSurveyResult.getWorstSellerName());
+			writer.println("Pior vendedor: " + salesSurveyResult.getWorstSellerName());
 			writer.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		return new File(fileName);
+		return new File("sales_survey_result.done.dat");
 	}
 	
 }
