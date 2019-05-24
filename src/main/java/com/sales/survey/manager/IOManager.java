@@ -26,7 +26,7 @@ public class IOManager {
 	private static final Logger logger = LoggerFactory.getLogger(IOManager.class);
 
 	public SalesSurveyData extractInputData(MultipartFile[] fileDatas, String absolutePath){
-		logger.debug("[SALES_SURVEY]: survey(fileDatas, absolutePath).");
+		logger.debug("[SALES_SURVEY]: extractInputData(fileDatas, absolutePath).");
 		
 		SalesSurveyData surveyData = new SalesSurveyData();
 		List<File> uploadedFiles = new ArrayList<File>();
@@ -36,7 +36,7 @@ public class IOManager {
 		 
 			// Client File Name
 			String name = fileData.getOriginalFilename();
-			logger.debug("[SALES_SURVEY]: doUpload(request, model, salesSurveyViewForm). Client File Name = " + name);
+			logger.debug("[SALES_SURVEY]: extractInputData(fileDatas, absolutePath): Client File Name = " + name);
 		 
 		    	if (name != null && name.length() > 0) {
 		    		try {
@@ -47,24 +47,19 @@ public class IOManager {
 		    			stream.write(fileData.getBytes());		    			
 		    			stream.close();
 		    			uploadedFiles.add(serverFile);
-		    			logger.debug("[SALES_SURVEY]: doUpload(request, model, salesSurveyViewForm). Write file = " + serverFile);
+		    			logger.debug("[SALES_SURVEY]: extractInputData(fileDatas, absolutePath): Uploaded file = " + serverFile);
 		    			
 		    			BufferedReader reader;
 		    			try {
 		    				
-		    				/* TODO
-		    				 * - Input files folder: %HOMEPATH%/data/in
-		    				 * - Check only .dat files
-		    				 * - Make this method more generic?
-		    				*/
 		    				reader = new BufferedReader(new FileReader(serverFile));
 		    				String line = reader.readLine();
 		    				
 		    				while (line != null) {
-		    					logger.debug("[SALES_SURVEY]: extractImputData(): line = " + line);
+		    					logger.debug("[SALES_SURVEY]: extractInputData(fileDatas, absolutePath): line = " + line);
 		    					String[] lineFields = line.split("ç");
 		    					
-		    					surveyData = generateSurveyData(lineFields);
+		    					generateSurveyData(lineFields, surveyData);
 		    					
 		    					line = reader.readLine();
 		    				}
@@ -76,10 +71,11 @@ public class IOManager {
 		    			
 		    			
 		    		} catch (Exception e) {
-		    			logger.debug("[SALES_SURVEY]: doUpload(request, model, salesSurveyViewForm). Error Write file = " + name);
+		    			logger.debug("[SALES_SURVEY]: extractInputData(fileDatas, absolutePath): Error Write file = " + name);
 		            failedFiles.add(name);
 		        }
 		    	}
+		    	// TODO Remove-Delete files used.
 		}
 		
 		surveyData.getUploadedFiles().addAll(uploadedFiles);
@@ -87,42 +83,8 @@ public class IOManager {
 		
 		return surveyData;	
 	}
-	
-	public SalesSurveyData extractInputData(){
-		logger.debug("[SALES_SURVEY]: extractImputData().");
 		
-		SalesSurveyData surveyData = new SalesSurveyData();
-		BufferedReader reader;
-		try {
-			
-			/* TODO
-			 * - Input files folder: %HOMEPATH%/data/in
-			 * - Check only .dat files
-			 * - Make this method more generic?
-			*/
-			reader = new BufferedReader(new FileReader("C:\\Users\\ricardo_machado\\Development\\Portfolio\\projects\\ibm-sicredi\\data\\in\\example_1.dat"));
-			String line = reader.readLine();
-			
-			while (line != null) {
-				logger.debug("[SALES_SURVEY]: extractImputData(): line = " + line);
-				String[] lineFields = line.split("ç");
-				
-				surveyData = generateSurveyData(lineFields);
-				
-				line = reader.readLine();
-			}
-			
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return surveyData;
-	}
-	
-	private SalesSurveyData generateSurveyData(String[] entry) {
-		
-		SalesSurveyData surveyData = new SalesSurveyData();
+	private SalesSurveyData generateSurveyData(String[] entry, SalesSurveyData surveyData) {
 		
 		String layout = entry[0];
 		if (layout.equals("001")) {

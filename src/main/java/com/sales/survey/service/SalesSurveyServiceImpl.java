@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.sales.survey.manager.IOManager;
+import com.sales.survey.processor.SurveyProcessor;
 import com.sales.survey.transport.SalesSurveyData;
+import com.sales.survey.transport.SalesSurveyResult;
 
 @Service
 public class SalesSurveyServiceImpl implements SalesSurveyService {
@@ -17,13 +19,18 @@ public class SalesSurveyServiceImpl implements SalesSurveyService {
 	@Autowired
 	private IOManager ioManager;
 	
+	@Autowired
+	private SurveyProcessor surveyProcessor;
+	
 	@Override
-	public SalesSurveyData survey(MultipartFile[] fileDatas, String absolutePath) {
+	public SalesSurveyResult survey(MultipartFile[] fileDatas, String absolutePath) {
 		logger.debug("[SALES_SURVEY]: survey(fileDatas, absolutePath).");
 		
 		SalesSurveyData extractedData = ioManager.extractInputData(fileDatas, absolutePath);
 		
-		return extractedData;
+		SalesSurveyResult surveyResult = surveyProcessor.executeSurvey(extractedData,absolutePath);
+		
+		return surveyResult;
 	}
 
 }

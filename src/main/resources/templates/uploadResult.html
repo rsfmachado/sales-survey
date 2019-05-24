@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-   <head>
-      <meta charset="UTF-8">
-      <title>Upload Result</title>
-   </head>
-    
-   <body>
-      <th:block th:include="/_menu"></th:block>
+<head>
+	<meta charset="UTF-8">
+	<title>Survey Result</title>
+</head>
+<body>
+	<th:block th:include="/_menu"></th:block>
+	<h3>Survey Result</h3>
+	
+    
+    <!-- Adicionar um Form para submeter ao carregar a pagina -->
+    <form id="resultForm" action="#" th:action="@{/download}" th:object="${salesSurveyResult}" method="POST">
+    		<input type="hidden" th:field="${salesSurveyResult.resultFileName}"/>
+    		<input type="hidden" th:field="${salesSurveyResult.resultFolderPath}"/>
+		<ul>
+	    		<li>Total de Clientes: <span th:text="${salesSurveyResult.numberOfClients}"></span></li>
+	    		<li>Total de Vendedores: <span th:text="${salesSurveyResult.numberOfSellers}"></span></li>
+	    		<li>Id da Melhor Venda: <span th:text="${salesSurveyResult.bestSaleID}"></span></li>
+	    		<li>Pior vendedor: <span th:text="${salesSurveyResult.worstSellerName}"></span></li>
+	    </ul>
+		<input type="submit" value="Download"/>
+	</form>
        
-      Description: <span th:utext="${description}"></span>
-      <br/>
-      <h3>Uploaded Files:</h3>
-       
-      <ul th:each="file : ${uploadedFiles}">
-         <li th:utext="${file}"></li>  
-      </ul>      
-       
-      <h3>Failed:</h3>
-      <ul th:each="file : ${failedFiles}">
-         <li style="color:red;" th:utext="${file}"></li>  
-      </ul>
-       
-   </body>
-    
+</body>
 </html>
